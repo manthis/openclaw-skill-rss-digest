@@ -11,18 +11,20 @@ OUTPUT_FORMAT="${OUTPUT_FORMAT:-text}"
 DRY_RUN="${DRY_RUN:-false}"
 MAX_ITEMS="${MAX_ITEMS:-20}"
 
-# Category emojis
-declare -A CATEGORY_EMOJI=(
-  ["crypto"]="🪙"
-  ["dev"]="💻"
-  ["ai"]="🤖"
-  ["security"]="🔒"
-  ["tech"]="⚙️"
-  ["news"]="📰"
-  ["finance"]="💰"
-  ["design"]="🎨"
-  ["other"]="📎"
-)
+# Category emojis (compatible with bash 3.2 — no associative arrays)
+category_emoji() {
+  case "$1" in
+    crypto)   echo "🪙" ;;
+    dev)      echo "💻" ;;
+    ai)       echo "🤖" ;;
+    security) echo "🔒" ;;
+    tech)     echo "⚙️" ;;
+    news)     echo "📰" ;;
+    finance)  echo "💰" ;;
+    design)   echo "🎨" ;;
+    *)        echo "📎" ;;
+  esac
+}
 
 mkdir -p "$(dirname "$LOG_FILE")" "$(dirname "$STATE_FILE")"
 
@@ -127,7 +129,7 @@ else
     # Group by category
     CATEGORIES=$(echo "$NEW_ITEMS" | jq -r '.[].category // "other"' | sort -u)
     for cat in $CATEGORIES; do
-      EMOJI="${CATEGORY_EMOJI[$cat]:-📎}"
+      EMOJI=$(category_emoji "$cat")
       echo "$EMOJI ${cat^}"
       echo "$NEW_ITEMS" | jq -r --arg c "$cat" '
         .[] | select((.category // "other") == $c) |
