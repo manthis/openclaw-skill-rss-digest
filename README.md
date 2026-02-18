@@ -15,6 +15,16 @@ export BLOGWATCHER_CMD="blogwatcher"
 ./scripts/rss-digest.sh --dry-run
 ```
 
+## ⚡ Performance
+
+Recent optimizations (2026-02-18):
+
+- 🚀 **O(n²) → O(n)** — Replaced nested loops for deduplication with `jq INDEX` for constant-time lookups
+- 📉 **Reduced process spawns** — Consolidated multiple `jq` filter passes into a single pipeline
+- 🎯 **Complexity improvement** — Deduplication now scales linearly regardless of feed size
+
+These optimizations are especially noticeable with large feed collections (50+ feeds, hundreds of items).
+
 ## Configuration
 
 | Variable | Default | Description |
